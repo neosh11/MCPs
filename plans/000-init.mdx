@@ -1,0 +1,51 @@
+# 000 Init: Working Square MCP
+
+## Phase 1: Repository Shape
+
+- [x] Create a Go monorepo workspace at the repository root.
+- [x] Add `openapi-mcp` as the first Go module.
+- [x] Keep local research clones and credentials out of git.
+
+## Phase 2: Verified Square Inputs
+
+- [x] Shallow clone `square/square-mcp-server` for behavior comparison.
+- [x] Clone `square/connect-api-specification` for the canonical OpenAPI source.
+- [x] Pin Square OpenAPI to commit `6f2205c` / release `2025-04-16`.
+- [x] Add Square manifest with production and sandbox base URLs.
+- [x] Exclude legacy services absent from Square's MCP surface.
+- [x] Exclude deprecated endpoints to match Square MCP's 283-method surface.
+
+## Phase 3: Reusable Abstractions
+
+- [x] Implement catalog structs, validation, loading, and deterministic JSON writing.
+- [x] Implement a generic HTTP executor independent of MCP transport.
+- [x] Implement a direct Go client API for service discovery, type discovery, and API calls.
+- [x] Implement an MCP stdio adapter over the same reusable runtime.
+
+## Phase 4: Generation
+
+- [x] Implement `openapi-mcp-gen`.
+- [x] Parse OpenAPI 3.x operations from the pinned Square spec.
+- [x] Group operations into services from tags.
+- [x] Derive stable method keys from operation IDs.
+- [x] Build request type entries from path params, query params, and request body fields.
+- [x] Generate `catalogs/square.json`.
+
+## Phase 5: Square Server
+
+- [x] Add `square-mcp` command.
+- [x] Load the generated Square catalog.
+- [x] Use `TOKEN` or `ACCESS_TOKEN` from environment.
+- [x] Support `.env` loading for local verification.
+- [x] Default to read-only mode unless `ALLOW_WRITES=true`.
+- [x] Support sandbox with `SANDBOX=true`.
+
+## Phase 6: Verification
+
+- [x] Add unit tests for catalog behavior.
+- [x] Add executor tests for path/query/body/auth/error/read-only handling.
+- [x] Add direct client tests.
+- [x] Add MCP stdio tests.
+- [x] Verify root workspace test command: `go test ./openapi-mcp/...`.
+- [x] Verify generated Square catalog shape: 38 services, 283 methods, deterministic regeneration.
+- [x] Run `.env`-backed Square read-only smoke call with `SANDBOX=true`.

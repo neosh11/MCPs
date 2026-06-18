@@ -1,6 +1,6 @@
 # MCPs
 
-A monorepo for Model Context Protocol (MCP) servers and tooling.
+A Go monorepo for Model Context Protocol (MCP) servers and tooling.
 
 ## openapi-mcp
 

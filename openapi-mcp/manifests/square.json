@@ -1,0 +1,23 @@
+{
+  "name": "square",
+  "spec": "specs/square-2025-04-16.json",
+  "specVersion": "2025-04-16",
+  "baseUrls": {
+    "default": "https://connect.squareup.com",
+    "sandbox": "https://connect.squareupsandbox.com"
+  },
+  "auth": "bearer",
+  "headers": {
+    "Square-Version": "2025-04-16"
+  },
+  "serviceFrom": "tag",
+  "methodKey": "operationIdVerb",
+  "writeMethods": ["post", "put", "patch", "delete"],
+  "excludeReleaseStatuses": ["DEPRECATED"],
+  "excludeServices": [
+    "Employees",
+    "MobileAuthorization",
+    "Transactions",
+    "V1Transactions"
+  ]
+}
