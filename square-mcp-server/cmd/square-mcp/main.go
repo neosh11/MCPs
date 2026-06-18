@@ -10,17 +10,15 @@ import (
 
 	"github.com/neosh11/MCPs/openapi-mcp/catalog"
 	"github.com/neosh11/MCPs/openapi-mcp/server"
+	squaremcpserver "github.com/neosh11/MCPs/square-mcp-server"
 )
 
 const (
-	defaultCatalogPath = "catalogs/square.json"
-	productionBaseURL  = "https://connect.squareup.com"
-	sandboxBaseURL     = "https://connect.squareupsandbox.com"
-	defaultVersion     = "2025-04-16"
+	defaultCatalogPath = ""
 )
 
 func main() {
-	catalogPath := flag.String("catalog", defaultCatalogPath, "Square catalog JSON path")
+	catalogPath := flag.String("catalog", defaultCatalogPath, "optional Square catalog JSON path; embedded catalog is used when empty")
 	baseURL := flag.String("base-url", "", "Square API base URL; defaults from SANDBOX/PRODUCTION")
 	flag.Parse()
 
@@ -38,8 +36,8 @@ func main() {
 	cfg := server.Config{
 		BaseURL: chooseBaseURL(*baseURL),
 		Headers: map[string]string{
-			"Square-Version": envDefault("SQUARE_VERSION", defaultVersion),
-			"User-Agent":     "openapi-mcp-square/0.1.0",
+			"Square-Version": envDefault("SQUARE_VERSION", squaremcpserver.APIVersion),
+			"User-Agent":     "square-mcp-server/0.1.0",
 		},
 		Auth: func(context.Context) (string, error) {
 			return firstEnv("ACCESS_TOKEN", "TOKEN"), nil
@@ -58,9 +56,12 @@ func main() {
 }
 
 func loadCatalog(path string) (*catalog.Catalog, error) {
+	if path == "" {
+		return squaremcpserver.LoadCatalog()
+	}
 	f, err := os.Open(path)
 	if err != nil && !filepath.IsAbs(path) {
-		f, err = os.Open(filepath.Join("openapi-mcp", path))
+		f, err = os.Open(filepath.Join("square-mcp-server", path))
 	}
 	if err != nil {
 		return nil, err
@@ -74,9 +75,9 @@ func chooseBaseURL(explicit string) string {
 		return explicit
 	}
 	if strings.ToLower(os.Getenv("SANDBOX")) == "true" {
-		return sandboxBaseURL
+		return squaremcpserver.SandboxURL
 	}
-	return productionBaseURL
+	return squaremcpserver.ProductionURL
 }
 
 func envDefault(key, fallback string) string {
